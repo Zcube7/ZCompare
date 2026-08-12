@@ -4,7 +4,7 @@
 
 ZCompare 是面向长期跨版本管理、维护 XLSX 文件用户的只读 Windows 对比工具。它支持双工作簿与双文件夹对比，能够保守对齐插入/删除行，并在同步滚动的左右表格中清晰展示结果。
 
-> 首次公开预览版：**v0.1.0**，支持 Windows 10/11 x64，仅支持真实 OOXML `.xlsx` 文件。
+> 公开预览版：**v0.1.1**，支持 Windows 10/11 x64，仅支持真实 OOXML `.xlsx` 文件。
 
 ![使用合成数据的 ZCompare 工作簿对比](docs/images/zcompare-workbook-diff.png)
 
@@ -21,8 +21,8 @@ ZCompare 是面向长期跨版本管理、维护 XLSX 文件用户的只读 Wind
 
 只从官方 [ZCompare Releases](https://github.com/Zcube7/ZCompare/releases) 页面下载。
 
-- **普通用户推荐：** `ZCompare-0.1.0-win-x64-setup.exe`。当前用户安装，无需管理员权限，也无需预装 .NET。
-- **开发者/高级用户：** `ZCompare-0.1.0-win-x64-portable-fdd.zip`。需要 .NET 10 Desktop Runtime x64，包含 GUI 与 CLI。
+- **普通用户推荐：** `ZCompare-0.1.1-win-x64-setup.exe`。当前用户安装，无需管理员权限，也无需预装 .NET。
+- **开发者/高级用户：** `ZCompare-0.1.1-win-x64-portable-fdd.zip`。需要 .NET 10 Desktop Runtime x64，包含 GUI 与 CLI。
 - 使用 `SHA256SUMS.txt` 校验下载文件。
 
 首版暂未购买代码签名，Windows SmartScreen 可能显示风险提示。请先核对 GitHub 官方仓库、文件名和 SHA-256，再按正常流程选择 **“更多信息”→“仍要运行”**；不要关闭 SmartScreen。
@@ -79,7 +79,7 @@ dotnet run --project src/ZCompare.App/ZCompare.App.csproj
 - 无遥测，不上传工作簿或报告。
 - 更新请求只向 GitHub 发送标准 HTTP 头和程序版本。
 - 最近路径与命名配置只保存在 `%LocalAppData%\ZCompare`。
-- 错误提示仅在本机显示；v0.1.0 不生成或上传诊断日志。
+- 错误提示仅在本机显示；v0.1.1 不生成或上传诊断日志。
 - 对比前后复核源文件 SHA-256，ZCompare 不写入源文件。
 
 完整隐私和 AI 辅助安装注意事项见[安装指南](docs/INSTALL.zh-CN.md)。

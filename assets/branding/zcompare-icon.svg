@@ -9,7 +9,7 @@
   <desc id="description">A sharp geometric Z made from blue, red, and green ribbon segments.</desc>
 
   <!-- The separated, forward-leaning ribbons keep the Z dynamic but legible at 16 px. -->
-  <polygon fill="#2563EB" points="96,176 936,96 816,304" />
+  <polygon fill="#2563EB" points="104,376 936,68 784,292" />
   <polygon fill="#DC2626" points="616,348 816,324 352,716 152,740" />
-  <polygon fill="#16A34A" points="136,768 936,816 832,936" />
+  <polygon fill="#16A34A" points="72,772 191,895 933,728" />
 </svg>

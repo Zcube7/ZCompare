@@ -4,7 +4,7 @@
 
 ZCompare is a read-only Windows tool for people who maintain XLSX files across long-lived versions. It compares two workbooks or two folders, aligns inserted/deleted rows conservatively, and presents the result in synchronized spreadsheet views.
 
-> Public preview: **v0.1.0** supports Windows 10/11 x64 and genuine OOXML `.xlsx` files only.
+> Public preview: **v0.1.1** supports Windows 10/11 x64 and genuine OOXML `.xlsx` files only.
 
 ![ZCompare workbook comparison using synthetic data](docs/images/zcompare-workbook-diff.png)
 
@@ -21,8 +21,8 @@ ZCompare is a read-only Windows tool for people who maintain XLSX files across l
 
 Download assets only from the official [ZCompare Releases](https://github.com/Zcube7/ZCompare/releases) page.
 
-- **Most users:** `ZCompare-0.1.0-win-x64-setup.exe`. Per-user install; no administrator rights or preinstalled .NET required.
-- **Developers / advanced users:** `ZCompare-0.1.0-win-x64-portable-fdd.zip`. Requires the .NET 10 Desktop Runtime x64 and includes both GUI and CLI.
+- **Most users:** `ZCompare-0.1.1-win-x64-setup.exe`. Per-user install; no administrator rights or preinstalled .NET required.
+- **Developers / advanced users:** `ZCompare-0.1.1-win-x64-portable-fdd.zip`. Requires the .NET 10 Desktop Runtime x64 and includes both GUI and CLI.
 - Verify downloads with `SHA256SUMS.txt`.
 
 The first release is not code-signed. Windows SmartScreen may show a warning. Verify the GitHub repository, filename, and SHA-256 before choosing **More info → Run anyway**. Do not disable SmartScreen.
@@ -79,7 +79,7 @@ After the window loads, ZCompare performs a non-blocking update check against Gi
 - No telemetry and no workbook/report upload.
 - The update request sends only standard HTTP headers and the app version to GitHub.
 - Recent paths and named profiles are stored locally under `%LocalAppData%\ZCompare`.
-- Error dialogs stay local; v0.1.0 does not create or upload diagnostic logs.
+- Error dialogs stay local; v0.1.1 does not create or upload diagnostic logs.
 - Source files are hashed before and after comparison and are never written by ZCompare.
 
 See the [installation guide](docs/INSTALL.md) for the full privacy and AI-assisted installation checklist.

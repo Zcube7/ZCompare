@@ -19,6 +19,9 @@ public sealed class BrandingAssetTests
         Assert.Contains("#2563EB", svg, StringComparison.Ordinal);
         Assert.Contains("#DC2626", svg, StringComparison.Ordinal);
         Assert.Contains("#16A34A", svg, StringComparison.Ordinal);
+        Assert.Contains("points=\"104,376 936,68 784,292\"", svg, StringComparison.Ordinal);
+        Assert.Contains("points=\"616,348 816,324 352,716 152,740\"", svg, StringComparison.Ordinal);
+        Assert.Contains("points=\"72,772 191,895 933,728\"", svg, StringComparison.Ordinal);
         Assert.DoesNotContain("<rect", svg, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("gradient", svg, StringComparison.OrdinalIgnoreCase);
 

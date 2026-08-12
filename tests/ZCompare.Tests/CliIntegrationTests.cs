@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 using ZCompare.Tests.Fixtures;
 
@@ -292,6 +293,8 @@ public sealed class CliIntegrationTests
             RedirectStandardError = true,
             UseShellExecute = false,
             CreateNoWindow = true,
+            StandardOutputEncoding = Encoding.UTF8,
+            StandardErrorEncoding = Encoding.UTF8,
         };
         startInfo.ArgumentList.Add(CliAssemblyPath());
         foreach (var argument in arguments)

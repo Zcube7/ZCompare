@@ -1,6 +1,8 @@
 using ZCompare.Core;
 using System.Reflection;
+using System.Text;
 
+Console.OutputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 return await ZCompareCli.RunAsync(args);
 
 internal static class ZCompareCli

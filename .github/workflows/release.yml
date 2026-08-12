@@ -42,7 +42,7 @@ jobs:
         shell: pwsh
         run: ./tools/build-release.ps1
       - name: Attest release binaries
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: |
             artifacts/release/ZCompare-*-win-x64-setup.exe

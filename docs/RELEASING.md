@@ -29,8 +29,8 @@ This document is for maintainers. A release must be reproducible from a clean pu
 ## Create the draft
 
 ```powershell
-git tag -a v0.1.0 -m "ZCompare v0.1.0"
-git push origin v0.1.0
+git tag -a vX.Y.Z -m "ZCompare vX.Y.Z"
+git push origin vX.Y.Z
 ```
 
 The tag workflow rebuilds and retests the exact commit, creates checksums and build provenance, and opens a Draft Release. Draft and prerelease versions are intentionally invisible to the application's `releases/latest` update check.

@@ -4,6 +4,12 @@ All notable changes to ZCompare are documented here. The project follows [Semant
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-08-12
+
+### Fixed
+
+- Corrected the application, installer, shortcut, and release branding to use the approved ZCompare icon geometry.
+
 ## [0.1.0] - 2026-08-12
 
 ### Added
@@ -15,5 +21,6 @@ All notable changes to ZCompare are documented here. The project follows [Semant
 - Safe handling for stale formula caches, changed source files, unsupported ISO Strict files, and unreadable containers.
 - Per-user Windows installer, portable developer package, release checksums, and non-intrusive update notification.
 
-[Unreleased]: https://github.com/Zcube7/ZCompare/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/Zcube7/ZCompare/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/Zcube7/ZCompare/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Zcube7/ZCompare/releases/tag/v0.1.0

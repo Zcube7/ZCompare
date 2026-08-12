@@ -22,7 +22,7 @@ public sealed class ComparisonReportExporterTests
 
         using var document = JsonDocument.Parse(await File.ReadAllTextAsync(outputPath));
         var root = document.RootElement;
-        Assert.Equal("0.1.0", root.GetProperty("ZCompareVersion").GetString());
+        Assert.Equal("0.1.1", root.GetProperty("ZCompareVersion").GetString());
         Assert.Equal("Different", root.GetProperty("Status").GetString());
         Assert.Equal(1, root.GetProperty("DifferenceCount").GetInt32());
         var worksheet = Assert.Single(root.GetProperty("Worksheets").EnumerateArray());

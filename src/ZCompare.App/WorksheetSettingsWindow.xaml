@@ -1,0 +1,256 @@
+<Window x:Class="ZCompare.App.WorksheetSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="工作表与行列对齐设置"
+        Width="940"
+        Height="720"
+        MinWidth="720"
+        MinHeight="560"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="220" />
+                <ColumnDefinition Width="24" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock VerticalAlignment="Center" FontWeight="SemiBold" Text="工作表配对" />
+            <ComboBox x:Name="PairingModeComboBox"
+                      Grid.Column="1"
+                      Margin="10,0,0,0"
+                      Padding="7,4"
+                      SelectionChanged="PairingModeComboBox_OnSelectionChanged">
+                <ComboBoxItem Content="按名称配对" Tag="Name" />
+                <ComboBoxItem Content="按顺序配对" Tag="Index" />
+                <ComboBoxItem Content="手工配对" Tag="Manual" />
+            </ComboBox>
+            <CheckBox x:Name="UseKeyColumnsCheckBox"
+                      Grid.Column="3"
+                      VerticalAlignment="Center"
+                      Checked="UseKeyColumnsCheckBox_OnChanged"
+                      Content="按关键列对齐行"
+                      Unchecked="UseKeyColumnsCheckBox_OnChanged"
+                      ToolTip="启用后，用每张工作表配置的关键列识别插入、删除和移动的行。" />
+            <Button Grid.Column="4"
+                    Margin="16,0,0,0"
+                    Padding="12,5"
+                    Click="OpenSuggestions_OnClick"
+                    Content="分析建议…" />
+        </Grid>
+
+        <TabControl x:Name="SettingsTabControl" Grid.Row="1" Margin="0,16,0,0">
+            <TabItem Header="手工工作表配对">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Foreground="{StaticResource MutedTextBrush}"
+                               Text="仅“手工配对”模式使用。左右工作表名称允许不同。" />
+                    <DataGrid x:Name="ManualPairsGrid"
+                              Grid.Row="1"
+                              Margin="0,8,0,8"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="True"
+                              CanUserDeleteRows="True"
+                              ItemsSource="{Binding ManualPairRows, RelativeSource={RelativeSource AncestorType=Window}}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Width="*" Binding="{Binding LeftWorksheetName, UpdateSourceTrigger=PropertyChanged}" Header="左侧工作表" />
+                            <DataGridTextColumn Width="*" Binding="{Binding RightWorksheetName, UpdateSourceTrigger=PropertyChanged}" Header="右侧工作表" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button Grid.Row="2" Width="100" HorizontalAlignment="Left" Click="RemoveManualPair_OnClick" Content="删除选中行" />
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="关键列规则">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Foreground="{StaticResource MutedTextBrush}"
+                               Text="工作表名称使用左右两侧的实际名称；关键列填写 Excel 列字母，多个用英文逗号分隔，例如 A,C。" />
+                    <DataGrid x:Name="KeyRulesGrid"
+                              Grid.Row="1"
+                              Margin="0,8,0,8"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="True"
+                              CanUserDeleteRows="True"
+                              ItemsSource="{Binding KeyRuleRows, RelativeSource={RelativeSource AncestorType=Window}}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Width="*" Binding="{Binding WorksheetName, UpdateSourceTrigger=PropertyChanged}" Header="工作表" />
+                            <DataGridTextColumn Width="100" Binding="{Binding HeaderRow, UpdateSourceTrigger=PropertyChanged}" Header="表头行" />
+                            <DataGridTextColumn Width="2*" Binding="{Binding Columns, UpdateSourceTrigger=PropertyChanged}" Header="关键列（A,C）" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button Grid.Row="2" Width="100" HorizontalAlignment="Left" Click="RemoveKeyRule_OnClick" Content="删除选中行" />
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="左右列映射">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock TextWrapping="Wrap" Foreground="{StaticResource MutedTextBrush}"
+                               Text="用于左右列位置不同的工作表。列对填写“左列=右列”，多个用英文逗号分隔，例如 A=B,C=D；预览统一显示在左侧列位置。" />
+                    <DataGrid x:Name="ColumnMappingsGrid"
+                              Grid.Row="1"
+                              Margin="0,8,0,8"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="True"
+                              CanUserDeleteRows="True"
+                              ItemsSource="{Binding ColumnMappingRows, RelativeSource={RelativeSource AncestorType=Window}}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Width="*" Binding="{Binding LeftWorksheetName, UpdateSourceTrigger=PropertyChanged}" Header="左侧工作表" />
+                            <DataGridTextColumn Width="*" Binding="{Binding RightWorksheetName, UpdateSourceTrigger=PropertyChanged}" Header="右侧工作表" />
+                            <DataGridTextColumn Width="2*" Binding="{Binding ColumnPairs, UpdateSourceTrigger=PropertyChanged}" Header="列对（A=B,C=D）" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button Grid.Row="2" Width="100" HorizontalAlignment="Left" Click="RemoveColumnMapping_OnClick" Content="删除选中行" />
+                </Grid>
+            </TabItem>
+
+            <TabItem x:Name="SuggestionsTab" Header="智能建议">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock TextWrapping="Wrap"
+                               Foreground="{StaticResource MutedTextBrush}"
+                               Text="只读取少量样本来建议关键列或左右列映射。分析不会修改设置；只有点击“应用选中建议”才会把建议填入上面的规则，仍需点击“确定”才会保存。" />
+
+                    <Grid Grid.Row="1" Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock VerticalAlignment="Center" FontWeight="SemiBold" Text="左侧文件" />
+                        <TextBox x:Name="SuggestionLeftPathTextBox" Grid.Column="1" Margin="10,0,8,6" Padding="6,4" />
+                        <Button Grid.Column="2" Margin="0,0,0,6" Padding="10,4" Click="BrowseSuggestionLeft_OnClick" Content="浏览…" />
+                        <TextBlock Grid.Row="1" VerticalAlignment="Center" FontWeight="SemiBold" Text="右侧文件" />
+                        <TextBox x:Name="SuggestionRightPathTextBox" Grid.Row="1" Grid.Column="1" Margin="10,0,8,0" Padding="6,4" />
+                        <Button Grid.Row="1" Grid.Column="2" Padding="10,4" Click="BrowseSuggestionRight_OnClick" Content="浏览…" />
+                    </Grid>
+
+                    <Grid Grid.Row="2" Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="72" />
+                            <ColumnDefinition Width="24" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="72" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center" FontWeight="SemiBold" Text="左工作表" />
+                        <ComboBox x:Name="SuggestionLeftWorksheetComboBox"
+                                  Grid.Column="1"
+                                  Margin="10,0,12,0"
+                                  Padding="6,4"
+                                  IsEditable="True"
+                                  ItemsSource="{Binding LeftWorksheetNames, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="表头行" />
+                        <TextBox x:Name="SuggestionLeftHeaderRowTextBox" Grid.Column="3" Margin="8,0,0,0" Padding="6,4" Text="1" />
+                        <TextBlock Grid.Column="5" VerticalAlignment="Center" FontWeight="SemiBold" Text="右工作表" />
+                        <ComboBox x:Name="SuggestionRightWorksheetComboBox"
+                                  Grid.Column="6"
+                                  Margin="10,0,12,0"
+                                  Padding="6,4"
+                                  IsEditable="True"
+                                  ItemsSource="{Binding RightWorksheetNames, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <TextBlock Grid.Column="7" VerticalAlignment="Center" Text="表头行" />
+                        <TextBox x:Name="SuggestionRightHeaderRowTextBox" Grid.Column="8" Margin="8,0,0,0" Padding="6,4" Text="1" />
+                    </Grid>
+
+                    <Grid Grid.Row="3" Margin="0,10,0,8">
+                        <StackPanel Orientation="Horizontal">
+                            <Button x:Name="AnalyzeSuggestionsButton" Width="104" Click="AnalyzeSuggestions_OnClick" Content="开始分析" />
+                            <Button x:Name="CancelSuggestionAnalysisButton" Width="88" Margin="8,0,0,0" Click="CancelSuggestionAnalysis_OnClick" Content="取消分析" IsEnabled="False" />
+                            <Button x:Name="ApplySuggestionsButton" Width="128" Margin="8,0,0,0" Click="ApplySuggestions_OnClick" Content="应用选中建议" />
+                        </StackPanel>
+                        <TextBlock x:Name="SuggestionStatusTextBlock"
+                                   Margin="348,0,0,0"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   Foreground="{StaticResource MutedTextBrush}"
+                                   Text="请选择左右文件和工作表。" />
+                    </Grid>
+
+                    <DataGrid x:Name="SuggestionsGrid"
+                              Grid.Row="4"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              IsReadOnly="False"
+                              SelectionChanged="SuggestionsGrid_OnSelectionChanged"
+                              ItemsSource="{Binding SuggestionRows, RelativeSource={RelativeSource AncestorType=Window}}">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Width="48" Header="应用">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"
+                                                  IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                                                  IsEnabled="{Binding CanApply}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Width="92" IsReadOnly="True" Binding="{Binding KindDisplay}" Header="类型" />
+                            <DataGridTextColumn Width="2*" IsReadOnly="True" Binding="{Binding Title}" Header="建议" />
+                            <DataGridTextColumn Width="72" IsReadOnly="True" Binding="{Binding ConfidenceDisplay}" Header="置信度" />
+                            <DataGridTextColumn Width="*" IsReadOnly="True" Binding="{Binding LeftColumnsDisplay}" Header="左列" />
+                            <DataGridTextColumn Width="*" IsReadOnly="True" Binding="{Binding RightColumnsDisplay}" Header="右列" />
+                            <DataGridTextColumn Width="3*" IsReadOnly="True" Binding="{Binding Reason}" Header="依据" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <TextBlock x:Name="SuggestionDetailsTextBlock"
+                               Grid.Row="5"
+                               Margin="0,8,0,0"
+                               MaxHeight="52"
+                               TextWrapping="Wrap"
+                               Foreground="{StaticResource MutedTextBrush}"
+                               Text="分组列建议仅供参考，不能直接应用。" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <Grid Grid.Row="2" Margin="0,16,0,0">
+            <TextBlock VerticalAlignment="Center"
+                       Foreground="{StaticResource MutedTextBrush}"
+                       Text="保存后需要重新对比才会生效。" />
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button Width="82" Margin="0,0,8,0" IsCancel="True" Content="取消" />
+                <Button Width="82" Click="SaveButton_OnClick" IsDefault="True" Content="确定" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ZCompare.App/ZCompare.App.csproj" />
+    <Project Path="src/ZCompare.Cli/ZCompare.Cli.csproj" />
+    <Project Path="src/ZCompare.Core/ZCompare.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ZCompare.App.Tests/ZCompare.App.Tests.csproj" />
+    <Project Path="tests/ZCompare.Tests/ZCompare.Tests.csproj" />
+  </Folder>
+</Solution>

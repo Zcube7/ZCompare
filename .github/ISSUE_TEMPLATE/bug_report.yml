@@ -1,0 +1,42 @@
+name: Bug report
+description: Report a reproducible ZCompare problem without attaching private workbooks.
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Please do not upload confidential XLSX files, local paths, or comparison reports.
+  - type: input
+    id: version
+    attributes:
+      label: ZCompare version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: package
+    attributes:
+      label: Installation type
+      options: [Installer, Portable, Source]
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the expected and actual behavior using synthetic or anonymized examples.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I removed confidential workbook content, usernames, company paths, and credentials.
+          required: true

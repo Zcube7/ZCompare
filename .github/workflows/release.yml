@@ -1,0 +1,58 @@
+name: Draft release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    env:
+      CI: 'true'
+      WINDIR: C:\Windows
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup --yes --no-progress
+      - name: Restore, build, and test
+        shell: pwsh
+        run: |
+          dotnet restore ZCompare.slnx
+          dotnet build ZCompare.slnx -c Release --no-restore --warnaserror
+          dotnet test ZCompare.slnx -c Release --no-build
+      - name: Scan public content and history
+        shell: pwsh
+        run: ./tools/Test-PublicRelease.ps1 -IncludeHistory
+      - name: Build and validate assets
+        shell: pwsh
+        run: ./tools/build-release.ps1
+      - name: Attest release binaries
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            artifacts/release/ZCompare-*-win-x64-setup.exe
+            artifacts/release/ZCompare-*-win-x64-portable-fdd.zip
+      - name: Create draft GitHub Release
+        shell: pwsh
+        run: >-
+          gh release create $env:GITHUB_REF_NAME
+          artifacts/release/ZCompare-*-win-x64-setup.exe
+          artifacts/release/ZCompare-*-win-x64-portable-fdd.zip
+          artifacts/release/SHA256SUMS.txt
+          --verify-tag --draft --generate-notes
+          --title "ZCompare $env:GITHUB_REF_NAME"

@@ -1,0 +1,32 @@
+<Window x:Class="ZCompare.App.DetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="差异详情"
+        Width="760"
+        Height="560"
+        MinWidth="520"
+        MinHeight="360"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBox x:Name="DetailsTextBox"
+                 Padding="10"
+                 AcceptsReturn="True"
+                 AcceptsTab="True"
+                 AutomationProperties.Name="完整差异详情"
+                 FontFamily="Consolas"
+                 FontSize="13"
+                 IsReadOnly="True"
+                 HorizontalScrollBarVisibility="Auto"
+                 VerticalScrollBarVisibility="Auto"
+                 TextWrapping="NoWrap" />
+        <StackPanel Grid.Row="1" Margin="0,12,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Width="88" Margin="0,0,8,0" Click="CopyButton_OnClick" Content="复制全部" />
+            <Button Width="88" IsCancel="True" Content="关闭" />
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1024"
+     height="1024"
+     viewBox="0 0 1024 1024"
+     role="img"
+     aria-labelledby="title description">
+  <title id="title">ZCompare application icon</title>
+  <desc id="description">A sharp geometric Z made from blue, red, and green ribbon segments.</desc>
+
+  <!-- The separated, forward-leaning ribbons keep the Z dynamic but legible at 16 px. -->
+  <polygon fill="#2563EB" points="96,176 936,96 816,304" />
+  <polygon fill="#DC2626" points="616,348 816,324 352,716 152,740" />
+  <polygon fill="#16A34A" points="136,768 936,816 832,936" />
+</svg>

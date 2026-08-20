@@ -16,7 +16,7 @@ public sealed class CliIntegrationTests
         var result = await RunCliAsync(argument);
 
         Assert.Equal(0, result.ExitCode);
-        Assert.Equal("ZCompare 0.1.1", result.StandardOutput.Trim());
+        Assert.Equal("ZCompare 0.1.2", result.StandardOutput.Trim());
     }
 
     [Theory]

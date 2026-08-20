@@ -9,7 +9,6 @@
         Height="900"
         MinWidth="1100"
         MinHeight="700"
-        Icon="pack://application:,,,/Assets/zcompare.ico"
         WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
@@ -426,7 +425,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="52" />
+                    <RowDefinition Height="64" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
@@ -464,6 +463,11 @@
                                     Content="其他详情"
                                     Style="{StaticResource ToolbarButtonStyle}"
                                     Visibility="{Binding HasOtherDetails, Converter={StaticResource BoolToVisibility}}" />
+                            <Button Click="SelectedCellDetailsButton_OnClick"
+                                    Content="完整值"
+                                    IsEnabled="{Binding HasSelectedCell}"
+                                    Style="{StaticResource ToolbarButtonStyle}"
+                                    ToolTip="查看当前单元格左右完整原始值、显示值和字符差异" />
                             <Button Command="{Binding PreviousDifferenceCommand}" Content="↑ 上一处" Style="{StaticResource ToolbarButtonStyle}" />
                             <Button Command="{Binding NextDifferenceCommand}" Content="↓ 下一处" Style="{StaticResource ToolbarButtonStyle}" />
                             </StackPanel>
@@ -543,16 +547,44 @@
                     <Border Grid.Column="0" Padding="6,4" BorderBrush="{StaticResource LineBrush}" BorderThickness="1,0,1,1">
                         <Grid>
                             <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-                            <DockPanel><TextBlock Width="54" FontWeight="SemiBold" Text="公式栏" /><TextBox IsReadOnly="True" Background="#F8FAFC" BorderBrush="{StaticResource LineBrush}" Text="{Binding LeftSelectedFormula, Mode=OneWay}" /></DockPanel>
-                            <TextBlock Grid.Row="1" Margin="54,3,0,0" TextTrimming="CharacterEllipsis"><Run Foreground="{StaticResource MutedTextBrush}" Text="原始值：" /><Run Text="{Binding LeftSelectedRaw, Mode=OneWay}" /><Run Foreground="{StaticResource MutedTextBrush}" Text="　显示值：" /><Run Text="{Binding LeftSelectedDisplay, Mode=OneWay}" /></TextBlock>
+                            <DockPanel>
+                                <TextBlock Width="54" FontWeight="SemiBold" Text="公式栏" />
+                                <TextBox IsReadOnly="True" Background="#F8FAFC" BorderBrush="{StaticResource LineBrush}" HorizontalScrollBarVisibility="Auto" Text="{Binding LeftSelectedFormula, Mode=OneWay}" ToolTip="{Binding LeftSelectedFormula}" />
+                            </DockPanel>
+                            <Grid Grid.Row="1" Margin="54,3,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" Foreground="{StaticResource MutedTextBrush}" Text="原始值" />
+                                <TextBox Grid.Column="1" Margin="0,0,8,0" Padding="3,1" IsReadOnly="True" Background="#F8FAFC" BorderBrush="{StaticResource LineBrush}" HorizontalScrollBarVisibility="Auto" Text="{Binding LeftSelectedRaw, Mode=OneWay}" TextWrapping="NoWrap" ToolTip="{Binding LeftSelectedRaw}" />
+                                <TextBlock Grid.Column="2" Margin="0,0,4,0" VerticalAlignment="Center" Foreground="{StaticResource MutedTextBrush}" Text="显示值" />
+                                <TextBox Grid.Column="3" Padding="3,1" IsReadOnly="True" Background="#F8FAFC" BorderBrush="{StaticResource LineBrush}" HorizontalScrollBarVisibility="Auto" Text="{Binding LeftSelectedDisplay, Mode=OneWay}" TextWrapping="NoWrap" ToolTip="{Binding LeftSelectedDisplay}" />
+                            </Grid>
                         </Grid>
                     </Border>
                     <Border Grid.Column="1" Background="#E2E8F0"><TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="10" Foreground="#64748B" Text="{Binding SelectedAddress}" TextAlignment="Center" TextWrapping="Wrap" /></Border>
                     <Border Grid.Column="2" Padding="6,4" BorderBrush="{StaticResource LineBrush}" BorderThickness="1,0,1,1">
                         <Grid>
                             <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-                            <DockPanel><TextBlock Width="54" FontWeight="SemiBold" Text="公式栏" /><TextBox IsReadOnly="True" Background="#F8FAFC" BorderBrush="{StaticResource LineBrush}" Text="{Binding RightSelectedFormula, Mode=OneWay}" /></DockPanel>
-                            <TextBlock Grid.Row="1" Margin="54,3,0,0" TextTrimming="CharacterEllipsis"><Run Foreground="{StaticResource MutedTextBrush}" Text="原始值：" /><Run Text="{Binding RightSelectedRaw, Mode=OneWay}" /><Run Foreground="{StaticResource MutedTextBrush}" Text="　显示值：" /><Run Text="{Binding RightSelectedDisplay, Mode=OneWay}" /></TextBlock>
+                            <DockPanel>
+                                <TextBlock Width="54" FontWeight="SemiBold" Text="公式栏" />
+                                <TextBox IsReadOnly="True" Background="#F8FAFC" BorderBrush="{StaticResource LineBrush}" HorizontalScrollBarVisibility="Auto" Text="{Binding RightSelectedFormula, Mode=OneWay}" ToolTip="{Binding RightSelectedFormula}" />
+                            </DockPanel>
+                            <Grid Grid.Row="1" Margin="54,3,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" Foreground="{StaticResource MutedTextBrush}" Text="原始值" />
+                                <TextBox Grid.Column="1" Margin="0,0,8,0" Padding="3,1" IsReadOnly="True" Background="#F8FAFC" BorderBrush="{StaticResource LineBrush}" HorizontalScrollBarVisibility="Auto" Text="{Binding RightSelectedRaw, Mode=OneWay}" TextWrapping="NoWrap" ToolTip="{Binding RightSelectedRaw}" />
+                                <TextBlock Grid.Column="2" Margin="0,0,4,0" VerticalAlignment="Center" Foreground="{StaticResource MutedTextBrush}" Text="显示值" />
+                                <TextBox Grid.Column="3" Padding="3,1" IsReadOnly="True" Background="#F8FAFC" BorderBrush="{StaticResource LineBrush}" HorizontalScrollBarVisibility="Auto" Text="{Binding RightSelectedDisplay, Mode=OneWay}" TextWrapping="NoWrap" ToolTip="{Binding RightSelectedDisplay}" />
+                            </Grid>
                         </Grid>
                     </Border>
                 </Grid>

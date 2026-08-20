@@ -4,12 +4,6 @@
     <ProjectReference Include="..\ZCompare.Core\ZCompare.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="..\..\assets\branding\zcompare.ico">
-      <Link>Assets\zcompare.ico</Link>
-    </Resource>
-  </ItemGroup>
-
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>

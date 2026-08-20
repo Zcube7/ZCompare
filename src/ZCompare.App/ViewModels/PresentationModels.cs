@@ -466,6 +466,8 @@ internal sealed class GridCellViewModel
 
     public string DisplayValue { get; init; } = string.Empty;
 
+    public IReadOnlyList<TextDifferenceSegment> DisplaySegments { get; init; } = [];
+
     public string RawValue { get; init; } = string.Empty;
 
     public string Formula { get; init; } = string.Empty;
@@ -1152,7 +1154,11 @@ internal sealed class VirtualGridCellList : IReadOnlyList<GridCellViewModel>
             var cell = reference is not null && _cells.TryGetValue(reference, out var localCell)
                 ? localCell
                 : null;
-            var oppositeExists = oppositeReference is not null && _oppositeCells.ContainsKey(oppositeReference);
+            var oppositeCell = oppositeReference is not null &&
+                _oppositeCells.TryGetValue(oppositeReference, out var matchedOppositeCell)
+                    ? matchedOppositeCell
+                    : null;
+            var oppositeExists = oppositeCell is not null;
             _differences.TryGetValue(displayReference, out var differences);
             var alignedOneSided = (_row is null) != (_oppositeRow is null);
             var oneSidedValue = (_oneSidedWorksheet || alignedOneSided) && (cell is not null || oppositeExists);
@@ -1178,9 +1184,14 @@ internal sealed class VirtualGridCellList : IReadOnlyList<GridCellViewModel>
                     : _rowDifferent
                         ? new SolidColorBrush(Color.FromRgb(255, 241, 242))
                         : ParseBrush(cell?.Format?.BackgroundArgb, Brushes.White);
-            var foreground = isDifferent
+            var foreground = isDifferent && !valueDifferent
                 ? new SolidColorBrush(Color.FromRgb(185, 28, 28))
                 : ParseBrush(cell?.Format?.ForegroundArgb, Brushes.Black);
+            var displayValue = cell?.DisplayValue ?? string.Empty;
+            var displaySegments = TextDifferenceHighlighter.CreateSegments(
+                displayValue,
+                oppositeCell?.DisplayValue ?? string.Empty,
+                valueDifferent);
 
             var advancedDetails = dialogDifferences
                 .Select(static difference => DifferencePresentation.FormatDetail(difference))
@@ -1190,7 +1201,8 @@ internal sealed class VirtualGridCellList : IReadOnlyList<GridCellViewModel>
             return new GridCellViewModel
             {
                 Address = reference ?? "—",
-                DisplayValue = cell?.DisplayValue ?? string.Empty,
+                DisplayValue = displayValue,
+                DisplaySegments = displaySegments,
                 RawValue = cell?.RawValue ?? string.Empty,
                 Formula = cell?.Formula ?? string.Empty,
                 IsDifferent = isDifferent,

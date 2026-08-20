@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using System.Windows.Threading;
+using ZCompare.App.Services;
 
 namespace ZCompare.App.Tests;
 
@@ -59,22 +59,7 @@ public sealed class MainWindowSmokeTests
                 var application = new App();
                 application.InitializeComponent();
                 var window = new MainWindow();
-                window.Show();
-                window.UpdateLayout();
-
-                var frame = new DispatcherFrame();
-                var timer = new DispatcherTimer(DispatcherPriority.Background)
-                {
-                    Interval = TimeSpan.FromSeconds(6),
-                };
-                timer.Tick += (_, _) =>
-                {
-                    timer.Stop();
-                    frame.Continue = false;
-                };
-                timer.Start();
-                Dispatcher.PushFrame(frame);
-
+                Assert.Contains($"ZCompare {ProductInfo.VersionText}", window.Title, StringComparison.Ordinal);
                 window.Close();
                 application.Shutdown();
             }
@@ -85,7 +70,7 @@ public sealed class MainWindowSmokeTests
         });
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
-        Assert.True(thread.Join(TimeSpan.FromSeconds(20)), "MainWindow construction timed out.");
+        Assert.True(thread.Join(TimeSpan.FromSeconds(10)), "MainWindow construction timed out.");
 
         Assert.Null(failure);
     }

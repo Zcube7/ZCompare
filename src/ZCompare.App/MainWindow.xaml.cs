@@ -5,10 +5,13 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using Microsoft.Win32;
+using ZCompare.App.Controls;
 using ZCompare.App.Services;
 using ZCompare.App.ViewModels;
 using ZCompare.Core;
@@ -115,13 +118,13 @@ public partial class MainWindow : Window
         var elementStyle = new Style(typeof(TextBlock));
         elementStyle.Setters.Add(new Setter(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis));
         elementStyle.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
-        elementStyle.Setters.Add(new Setter(TextBlock.ForegroundProperty, new Binding($"Cells[{index}].Foreground")));
-        elementStyle.Setters.Add(new Setter(TextBlock.FontFamilyProperty, new Binding($"Cells[{index}].FontFamily")));
-        elementStyle.Setters.Add(new Setter(TextBlock.FontSizeProperty, new Binding($"Cells[{index}].FontSize")));
-        elementStyle.Setters.Add(new Setter(TextBlock.FontWeightProperty, new Binding($"Cells[{index}].FontWeight")));
-        elementStyle.Setters.Add(new Setter(TextBlock.FontStyleProperty, new Binding($"Cells[{index}].FontStyle")));
-        elementStyle.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, new Binding($"Cells[{index}].TextAlignment")));
-        elementStyle.Setters.Add(new Setter(TextBlock.TextWrappingProperty, new Binding($"Cells[{index}].TextWrapping")));
+        elementStyle.Setters.Add(new Setter(TextBlock.ForegroundProperty, CreateCellTagBinding(nameof(GridCellViewModel.Foreground))));
+        elementStyle.Setters.Add(new Setter(TextBlock.FontFamilyProperty, CreateCellTagBinding(nameof(GridCellViewModel.FontFamily))));
+        elementStyle.Setters.Add(new Setter(TextBlock.FontSizeProperty, CreateCellTagBinding(nameof(GridCellViewModel.FontSize))));
+        elementStyle.Setters.Add(new Setter(TextBlock.FontWeightProperty, CreateCellTagBinding(nameof(GridCellViewModel.FontWeight))));
+        elementStyle.Setters.Add(new Setter(TextBlock.FontStyleProperty, CreateCellTagBinding(nameof(GridCellViewModel.FontStyle))));
+        elementStyle.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, CreateCellTagBinding(nameof(GridCellViewModel.TextAlignment))));
+        elementStyle.Setters.Add(new Setter(TextBlock.TextWrappingProperty, CreateCellTagBinding(nameof(GridCellViewModel.TextWrapping))));
 
         var baseCellStyle = (Style)FindResource("SpreadsheetCellStyle");
         var cellStyle = new Style(typeof(DataGridCell), baseCellStyle);
@@ -129,15 +132,18 @@ public partial class MainWindow : Window
             FrameworkElement.TagProperty,
             new Binding($"Cells[{index}]") { Mode = BindingMode.OneWay }));
 
-        return new DataGridTextColumn
+        var displayBinding = new Binding($"Cells[{index}].DisplayValue")
+        {
+            Mode = BindingMode.OneWay,
+            FallbackValue = string.Empty,
+            TargetNullValue = string.Empty,
+        };
+        return new DifferenceTextColumn
         {
             Header = GetColumnName(index + 1),
-            Binding = new Binding($"Cells[{index}].DisplayValue")
-            {
-                Mode = BindingMode.OneWay,
-                FallbackValue = string.Empty,
-                TargetNullValue = string.Empty,
-            },
+            Binding = displayBinding,
+            ClipboardContentBinding = displayBinding,
+            SegmentsBinding = CreateCellTagBinding(nameof(GridCellViewModel.DisplaySegments)),
             CellStyle = cellStyle,
             ElementStyle = elementStyle,
             IsReadOnly = true,
@@ -146,6 +152,12 @@ public partial class MainWindow : Window
             MaxWidth = 360,
         };
     }
+
+    private static Binding CreateCellTagBinding(string propertyName) => new($"Tag.{propertyName}")
+    {
+        Mode = BindingMode.OneWay,
+        RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(DataGridCell), 1),
+    };
 
     private static string GetColumnName(int column)
     {
@@ -334,8 +346,8 @@ public partial class MainWindow : Window
         }
 
         var displayRowIndex = grid.Items.IndexOf(row);
-        var details = _viewModel.GetCellDialogDetails(displayRowIndex, grid.CurrentCell.Column.DisplayIndex);
-        if (!string.IsNullOrWhiteSpace(details))
+        var details = _viewModel.GetCellDetailsContent(displayRowIndex, grid.CurrentCell.Column.DisplayIndex);
+        if (details is not null)
         {
             ShowDetailsWindow($"{row.RowHeader} 行单元格差异详情", details);
         }
@@ -348,6 +360,9 @@ public partial class MainWindow : Window
             ShowDetailsWindow("其他差异详情", _viewModel.OtherDetailsText);
         }
     }
+
+    private void SelectedCellDetailsButton_OnClick(object sender, RoutedEventArgs eventArgs) =>
+        ShowCurrentCellDetails(LeftGrid);
 
     private void SpreadsheetGrid_OnLoaded(object sender, RoutedEventArgs eventArgs)
     {
@@ -477,7 +492,7 @@ public partial class MainWindow : Window
 
     private static T? FindVisualAncestor<T>(DependencyObject source) where T : DependencyObject
     {
-        for (var current = source; current is not null; current = VisualTreeHelper.GetParent(current))
+        for (var current = source; current is not null; current = GetParent(current))
         {
             if (current is T match)
             {
@@ -487,7 +502,22 @@ public partial class MainWindow : Window
         return null;
     }
 
+    private static DependencyObject? GetParent(DependencyObject current) => current switch
+    {
+        FrameworkContentElement contentElement =>
+            ContentOperations.GetParent(contentElement) ?? contentElement.Parent,
+        ContentElement contentElement => ContentOperations.GetParent(contentElement),
+        Visual or Visual3D => VisualTreeHelper.GetParent(current),
+        _ => LogicalTreeHelper.GetParent(current),
+    };
+
     private void ShowDetailsWindow(string title, string details)
+    {
+        var window = new DetailsWindow(title, details) { Owner = this };
+        window.ShowDialog();
+    }
+
+    private void ShowDetailsWindow(string title, CellDetailsContent details)
     {
         var window = new DetailsWindow(title, details) { Owner = this };
         window.ShowDialog();

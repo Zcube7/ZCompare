@@ -4,6 +4,18 @@ All notable changes to ZCompare are documented here. The project follows [Semant
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-08-20
+
+### Added
+
+- Added complete raw/display-value viewing with horizontal scrolling for long cell contents.
+- Highlighted changed character spans in both the worksheet grid and cell-detail window while keeping copied text unmodified.
+
+### Fixed
+
+- Fixed a crash when double-clicking highlighted text inside a differing cell.
+- Removed synthetic `⟦ ⟧` difference markers from cell-detail text and preserved real brackets, whitespace, and trailing spaces when copying.
+
 ## [0.1.1] - 2026-08-12
 
 ### Fixed
@@ -21,6 +33,7 @@ All notable changes to ZCompare are documented here. The project follows [Semant
 - Safe handling for stale formula caches, changed source files, unsupported ISO Strict files, and unreadable containers.
 - Per-user Windows installer, portable developer package, release checksums, and non-intrusive update notification.
 
-[Unreleased]: https://github.com/Zcube7/ZCompare/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/Zcube7/ZCompare/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/Zcube7/ZCompare/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Zcube7/ZCompare/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Zcube7/ZCompare/releases/tag/v0.1.0

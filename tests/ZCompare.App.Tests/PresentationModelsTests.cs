@@ -113,8 +113,8 @@ public sealed class PresentationModelsTests
         Assert.True(changedLeft.IsDifferent);
         Assert.True(changedLeft.IsValueDifferent);
         Assert.True(changedRight.IsDifferent);
-        AssertBrushColor(changedLeft.Foreground, 185, 28, 28);
-        AssertBrushColor(changedRight.Foreground, 185, 28, 28);
+        AssertBrushColor(changedLeft.Foreground, 0, 0, 0);
+        AssertBrushColor(changedRight.Foreground, 0, 0, 0);
     }
 
     [Fact]
@@ -141,8 +141,8 @@ public sealed class PresentationModelsTests
         AssertBrushColor(existing.Background, 252, 165, 165);
         Assert.Equal(FontWeights.SemiBold, existing.FontWeight);
         AssertBrushColor(missing.Background, 248, 250, 252);
-        AssertBrushColor(existing.Foreground, 185, 28, 28);
-        AssertBrushColor(missing.Foreground, 185, 28, 28);
+        AssertBrushColor(existing.Foreground, 0, 0, 0);
+        AssertBrushColor(missing.Foreground, 0, 0, 0);
     }
 
     [Fact]

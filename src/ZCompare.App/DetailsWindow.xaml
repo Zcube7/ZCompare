@@ -13,17 +13,17 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBox x:Name="DetailsTextBox"
-                 Padding="10"
-                 AcceptsReturn="True"
-                 AcceptsTab="True"
-                 AutomationProperties.Name="完整差异详情"
-                 FontFamily="Consolas"
-                 FontSize="13"
-                 IsReadOnly="True"
-                 HorizontalScrollBarVisibility="Auto"
-                 VerticalScrollBarVisibility="Auto"
-                 TextWrapping="NoWrap" />
+        <Border Background="White" BorderBrush="#93C5FD" BorderThickness="1">
+            <ScrollViewer AutomationProperties.Name="完整差异详情"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto">
+                <TextBlock x:Name="DetailsTextBlock"
+                           Padding="10"
+                           FontFamily="Consolas"
+                           FontSize="13"
+                           TextWrapping="NoWrap" />
+            </ScrollViewer>
+        </Border>
         <StackPanel Grid.Row="1" Margin="0,12,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
             <Button Width="88" Margin="0,0,8,0" Click="CopyButton_OnClick" Content="复制全部" />
             <Button Width="88" IsCancel="True" Content="关闭" />

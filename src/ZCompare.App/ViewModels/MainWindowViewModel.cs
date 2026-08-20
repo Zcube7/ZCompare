@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -656,8 +657,16 @@ internal sealed class MainWindowViewModel : ObservableObject
     public string SelectedAddress
     {
         get => _selectedAddress;
-        private set => SetProperty(ref _selectedAddress, value);
+        private set
+        {
+            if (SetProperty(ref _selectedAddress, value))
+            {
+                OnPropertyChanged(nameof(HasSelectedCell));
+            }
+        }
     }
+
+    public bool HasSelectedCell => !string.IsNullOrWhiteSpace(SelectedAddress) && SelectedAddress != "—";
 
     public string LeftSelectedRaw
     {
@@ -895,17 +904,133 @@ internal sealed class MainWindowViewModel : ObservableObject
         RightSelectedFormula = right?.Formula ?? string.Empty;
     }
 
-    public string GetCellDialogDetails(int displayRowIndex, int columnIndex)
+    public string GetCellDialogDetails(int displayRowIndex, int columnIndex) =>
+        GetCellDetailsContent(displayRowIndex, columnIndex)?.ClipboardText ?? string.Empty;
+
+    internal CellDetailsContent? GetCellDetailsContent(int displayRowIndex, int columnIndex)
     {
+        var left = GridViewport.GetCell(CompareSide.Left, displayRowIndex, columnIndex);
+        var right = GridViewport.GetCell(CompareSide.Right, displayRowIndex, columnIndex);
+        if (left is null && right is null)
+        {
+            return null;
+        }
+
+        var valueDifference = left?.IsValueDifferent == true || right?.IsValueDifferent == true;
+        var segments = new List<DetailTextSegment>();
+        AppendCellValueDetails(segments, "左侧", left, right, valueDifference);
+        AppendDetailText(segments, Environment.NewLine + Environment.NewLine);
+        AppendCellValueDetails(segments, "右侧", right, left, valueDifference);
+
         var details = new[]
             {
-                GridViewport.GetCell(CompareSide.Left, displayRowIndex, columnIndex)?.AdvancedDifferenceDetails,
-                GridViewport.GetCell(CompareSide.Right, displayRowIndex, columnIndex)?.AdvancedDifferenceDetails,
+                left?.DifferenceDetails,
+                right?.DifferenceDetails,
+                left?.AdvancedDifferenceDetails,
+                right?.AdvancedDifferenceDetails,
             }
             .Where(static value => !string.IsNullOrWhiteSpace(value))
             .Distinct(StringComparer.Ordinal)
             .ToArray();
-        return string.Join(Environment.NewLine + Environment.NewLine, details!);
+        if (details.Length > 0)
+        {
+            AppendDetailText(
+                segments,
+                Environment.NewLine + Environment.NewLine + "【差异说明】" + Environment.NewLine);
+            AppendDetailText(
+                segments,
+                string.Join(Environment.NewLine + Environment.NewLine, details!));
+        }
+
+        return new CellDetailsContent(
+            string.Concat(segments.Select(static segment => segment.ClipboardText)),
+            segments);
+    }
+
+    private static void AppendCellValueDetails(
+        List<DetailTextSegment> segments,
+        string sideName,
+        GridCellViewModel? cell,
+        GridCellViewModel? oppositeCell,
+        bool valueDifference)
+    {
+        AppendDetailText(
+            segments,
+            $"【{sideName}】地址：{cell?.Address ?? "—"}{Environment.NewLine}" +
+            $"原始值：{Environment.NewLine}");
+        AppendSelectedValue(segments, cell?.RawValue, oppositeCell?.RawValue, valueDifference);
+        AppendDetailText(segments, Environment.NewLine + "显示值：" + Environment.NewLine);
+        AppendSelectedValue(segments, cell?.DisplayValue, oppositeCell?.DisplayValue, valueDifference);
+        if (!string.IsNullOrEmpty(cell?.Formula))
+        {
+            AppendDetailText(segments, Environment.NewLine + "公式：" + Environment.NewLine + cell.Formula);
+        }
+    }
+
+    private static void AppendSelectedValue(
+        List<DetailTextSegment> segments,
+        string? value,
+        string? oppositeValue,
+        bool valueDifference)
+    {
+        value ??= string.Empty;
+        oppositeValue ??= string.Empty;
+        if (value.Length == 0)
+        {
+            AppendDetailText(
+                segments,
+                "（空值）",
+                string.Empty,
+                valueDifference && oppositeValue.Length > 0);
+            return;
+        }
+
+        var visualizeWhitespace = string.IsNullOrWhiteSpace(value);
+        foreach (var segment in TextDifferenceHighlighter.CreateSegments(value, oppositeValue, valueDifference))
+        {
+            AppendDetailText(
+                segments,
+                visualizeWhitespace ? VisualizeWhitespace(segment.Text) : segment.Text,
+                segment.Text,
+                segment.IsDifferent);
+        }
+    }
+
+    private static string VisualizeWhitespace(string value) => value
+        .Replace("\r", "␍", StringComparison.Ordinal)
+        .Replace("\n", "␊", StringComparison.Ordinal)
+        .Replace("\t", "⇥", StringComparison.Ordinal)
+        .Replace(" ", "␠", StringComparison.Ordinal);
+
+    private static void AppendDetailText(
+        List<DetailTextSegment> segments,
+        string text,
+        bool isDifferent = false) =>
+        AppendDetailText(segments, text, text, isDifferent);
+
+    private static void AppendDetailText(
+        List<DetailTextSegment> segments,
+        string displayText,
+        string clipboardText,
+        bool isDifferent)
+    {
+        if (displayText.Length == 0 && clipboardText.Length == 0)
+        {
+            return;
+        }
+
+        if (segments.Count > 0 && segments[^1].IsDifferent == isDifferent)
+        {
+            var previous = segments[^1];
+            segments[^1] = previous with
+            {
+                DisplayText = previous.DisplayText + displayText,
+                ClipboardText = previous.ClipboardText + clipboardText,
+            };
+            return;
+        }
+
+        segments.Add(new DetailTextSegment(displayText, clipboardText, isDifferent));
     }
 
     private void SetMode(CompareMode mode)
